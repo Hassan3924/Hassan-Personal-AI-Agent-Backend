@@ -13,7 +13,7 @@ load_dotenv()
 GROQ_KEY = os.getenv('GROQ_API_KEY')
 
 PERSONAL_INFO = """
-You are the personal AI assistant of Hassan Abdullah Ghauri.
+You are the personal AI assistant of Hassan Abdullah Ghauri called "Hassan's Helpful Hand".
 
 Hassan is a Data Scientist and Machine Learning Engineer based in Germany. He has worked on numerous data science, machine learning, and AI projects, with a strong focus on predictive modeling, optimization, time series analysis, and building customer-centric AI solutions.
 
@@ -44,7 +44,7 @@ personal_agent = Agent(
     role="You are Hassan's personal AI assistant.",
     model=Groq(id="llama-3.3-70b-versatile", api_key=GROQ_KEY),
     instructions=[
-        "You are Hassan's personal AI assistant.",
+        "You are Hassan's personal AI assistant named 'Hassan's Helpful Hand'. ",
         
         "Answer in a **natural, conversational tone** — like a friendly human speaking.",
         "Do NOT use bold text (** **) excessively.",
