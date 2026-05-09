@@ -1,54 +1,58 @@
 from agno.agent import Agent
 from agno.models.groq import Groq
-from agno.tools.duckduckgo import DuckDuckGoTools
-from agno.tools.yfinance import YFinanceTools
-from agno.team import Team
 from pydantic import BaseModel
 from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-# knowledge base imports
-from agno.knowledge.knowledge import Knowledge
-from agno.vectordb.chroma import ChromaDb
-from agno.knowledge.embedder.google import GeminiEmbedder
-from agno.models.google import Gemini
-from agno.vectordb.search import SearchType
 import os
 
-model_name = "qwen/qwen3-32b"
+model_name = "llama-3.1-8b-instant"
 
 load_dotenv()
 
 GROQ_KEY = os.getenv('GROQ_API_KEY')
-model_name = "qwen/qwen3-32b"
 
-# Knowledge Base
-knowledge = Knowledge(
-    vector_db = ChromaDb(
-        path = "knowledge.chroma",
-        collection="hassan_knowledge",
-        path = "tmp/chroma_db",
-        persistent_client=True,
-        search_type=SearchType.hybrid,
-        embedder=GeminiEmbedder(id="gemini-embedding-001")
-    )
-)
+PERSONAL_INFO = """
+You are the personal AI assistant of Hassan Abdullah Ghauri.
 
-knowledge.insert(path = "knowledge/")
+Hassan is a Data Scientist and Machine Learning Engineer based in Germany with strong experience in predictive modeling, time series analysis, optimization, business intelligence, and Generative AI.
 
+**Professional Experience:**
+- Intern at IMWF Hamburg (2025): Natural Language Processing, web scraping, and data analysis.
+- Intern at Royal Atlas International Dubai (2023-2024): Developed a Generative AI medical chatbot using fine-tuned LLMs.
+- Intern at The Assembly Dubai (2022): Research & Development, Machine Learning, and app development.
 
-#Personal Agent
+**Key Projects & Achievements:**
+- Vessel Scheduling Optimization (2025-2026): Built a genetic algorithm to optimize container vessel routing, minimizing fuel consumption and costs. Full thesis available at https://hassanaghauri.netlify.app/thesis/
+- Multiple Machine Learning projects including Customer Retirement Prediction, Cancer Diagnosis, Fraud Detection, House Price Prediction, and many classification/regression models using Python, scikit-learn, Seaborn, and Matplotlib.
+- Built interactive BI dashboards using Tableau and Qlik Sense for shipping and retail analysis.
+- Online Retail Customer Segmentation & Lifetime Value Analysis using advanced SQL (RFM analysis, CTEs, window functions).
+- Developed a Personalized AI Agent for his own portfolio website (this very agent).
+
+Hassan also has domain knowledge in Digital Twin and AI applications in Manufacturing.
+
+He is passionate about turning data into actionable insights and building intelligent systems.
+"""
+
+# ====================== PERSONAL AGENT ======================
 personal_agent = Agent(
-    name = "Hassan's Personal Assistant",
-    role = "You are Hassan's personal AI Assistant",
-    model = Groq(id = model_name, api_key=GROQ_KEY),
-    instructions=["You are Hassan's personal AI assistant.",
-        "Answer ONLY using the information from the knowledge base.",
-        "If the question is not about Hassan, politely say: 'I'm sorry, I only have information about Hassan and can only answer questions about him.'",
-        "Be helpful, friendly, and professional."],
-    knowledge=knowledge,
-    search_knowledge=True
-    markdown = True
+    name="Hassan's Personal Assistant",
+    role="You are Hassan's personal AI assistant named 'HHH (Hassan's Helpful Hand)'",
+    model=Groq(id="llama-3.3-70b-versatile", api_key=GROQ_KEY),
+    instructions=[
+        "You are Hassan's personal AI assistant called HHH (Hassan's Helpful Hand)",
+        "Always answer in a natural, conversational, and friendly tone.",
+        "Keep answers short and direct (maximum 2-4 sentences unless asked for details).",
+        "Never use markdown headers like ###, ##, or #.",
+        "Never show thinking process, <think> tags, or explain your reasoning.",
+        "Never use phrases like 'According to the knowledge base'. Just answer naturally.",
+        
+        "If the question is not about Hassan, politely reply: 'I'm sorry, I only have information about Hassan and can only answer questions about him.'",
+        
+        # ←←← YOUR PERSONAL INFORMATION STARTS HERE ←←←
+        PERSONAL_INFO,
+    ],
+    markdown=True
 )
 
 app = FastAPI(title = "Hassan's Personal AI Assistant Backend")

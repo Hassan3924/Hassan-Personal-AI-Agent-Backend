@@ -16,3 +16,6 @@ python-multipart
 ipywidgets
 ddgs
 agno 
+chromadb
+pypdf
+sentence-transformers
